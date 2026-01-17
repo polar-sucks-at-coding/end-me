@@ -70,8 +70,8 @@ namespace undistract
 
 void fuckGlados(const dpp::message& msg, const dpp::message_create_t& event)
 {
-    uint flip_off_glados = rand() % 5;
     srand(time(0));
+    uint flip_off_glados = rand() % 5;
 
     if (msg.author.id == GLADOS_ID) std::cout << "\nStupid clanker replied to someone\n";
     else return;
