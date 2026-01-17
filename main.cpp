@@ -90,9 +90,9 @@ void fuckGlados(const dpp::message& msg, const dpp::message_create_t& event)
 void ragebait(const dpp::message_create_t& event)
 {
     srand(time(0));
-    uint random = rand() % 101;
+    uint random = rand() % 50;
 
-    if (rand() != 0) {std::cout << "message not getting ragebaited" << std::endl; return;}
+    if (random) {std::cout << "message not getting ragebaited" << std::endl; return;}
 
     size_t pool_size = sizeof(ragebait_pool)/sizeof(ragebait_pool[0]);
 
