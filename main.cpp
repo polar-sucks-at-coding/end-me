@@ -176,7 +176,7 @@ int main()
         if (msg.author.id != BOT_ID) undistract::undistract(msg, event, bot);
         logMessage(msg);
         fuckGlados(msg, event);
-        ragebait(event);
+        if (msg.channel_id == GENERAL_CHANNEL_ID && msg.author.id != BOT_ID) ragebait(event);
     });
 
     bot.start(dpp::st_wait);
