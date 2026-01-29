@@ -1,7 +1,11 @@
 #include "token.h"
 #include "other-shit.h"
-#include <dpp/dispatcher.h>
+#include "message-game.h"
 #include <dpp/dpp.h>
+#include <dpp/cluster.h>        // cluster class (often covered by dpp.h)
+#include <dpp/message.h>        // dpp::message
+#include <dpp/emoji.h>          // dpp::emoji helpers / formatting
+#include <dpp/utility.h>        // utility::emoji_format (if using)
 #include <vector>
 #include <ctime>
 #include <string>
@@ -121,6 +125,15 @@ void logMessage(const dpp::message& msg)
     std::cout << "Message content: " << msg.content << std::endl;  
 }
 
+void pregnantReact(const dpp::message_create_t& event, dpp::cluster& bot)
+{
+    if(event.msg.content.find("🫃") == std::string::npos) return;
+
+    bot.message_add_reaction(event.msg.id, event.msg.channel_id, "🫃");
+}
+
+MsgGame::Game* game;
+
 int main() 
 {    
     users_to_undistract.resize(0);
@@ -164,6 +177,19 @@ int main()
             }
             event.reply("LMAOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
         }
+        else if (command_name == "initializegame")
+        {
+            game = new MsgGame::Game();
+            if (game->map != nullptr && game) 
+            {
+                event.reply("Created game successfully!"); 
+                std::cout << "created game" << std::endl;
+            }
+        }
+        else if (command_name == "drawmap")
+        {
+            game->drawMapToMessage(event);
+        }
     });
     
     bot.on_ready([&bot](const dpp::ready_t& event) {
@@ -171,6 +197,8 @@ int main()
             bot.global_command_create(dpp::slashcommand("undistractor", "For idiot to focus", bot.me.id));
             bot.global_command_create(dpp::slashcommand("saytime", "Gives the current time", bot.me.id));
             bot.global_command_create(dpp::slashcommand("laughatthisguy", "for polar to laugh at people", bot.me.id));
+            bot.global_command_create(dpp::slashcommand("initializegame", "command to create game object and map", bot.me.id));
+            bot.global_command_create(dpp::slashcommand("drawmap", "command to draw full map", bot.me.id));
         }
     });
     
@@ -181,12 +209,14 @@ int main()
 
         logMessage(msg);
         fuckGlados(msg, event);
+        pregnantReact(event, bot); // pregnant reacting itself is intentional behavior, I nearly got executed for trying to make it otherwise
 
         if (msg.author.id == BOT_ID) return;
         //functions that aren't supposed to interact with the bot's own messages
 
         undistract::undistract(msg, event, bot);
         ragebait(event); 
+        
 
     });
 
