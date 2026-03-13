@@ -177,7 +177,7 @@ int main()
             }
             event.reply("LMAOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
         }
-        else if (command_name == "initializegame")
+/*        else if (command_name == "initializegame")
         {
             game = new MsgGame::Game();
             if (game->map != nullptr && game) 
@@ -190,6 +190,7 @@ int main()
         {
             game->drawMapToMessage(event);
         }
+*/
     });
     
     bot.on_ready([&bot](const dpp::ready_t& event) {
@@ -197,9 +198,9 @@ int main()
             bot.global_command_create(dpp::slashcommand("undistractor", "For idiot to focus", bot.me.id));
             bot.global_command_create(dpp::slashcommand("saytime", "Gives the current time", bot.me.id));
             bot.global_command_create(dpp::slashcommand("laughatthisguy", "for polar to laugh at people", bot.me.id));
-            bot.global_command_create(dpp::slashcommand("initializegame", "command to create game object and map", bot.me.id));
+/*            bot.global_command_create(dpp::slashcommand("initializegame", "command to create game object and map", bot.me.id));
             bot.global_command_create(dpp::slashcommand("drawmap", "command to draw full map", bot.me.id));
-        }
+*/        }
     });
     
     bot.on_message_create([&bot](const dpp::message_create_t& event)
