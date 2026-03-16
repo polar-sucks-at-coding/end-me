@@ -1,6 +1,6 @@
 #include "token.h"
 #include "other-shit.h"
-#include "message-game.h"
+#include <dpp/dispatcher.h>
 #include <dpp/dpp.h>
 #include <dpp/cluster.h>        // cluster class (often covered by dpp.h)
 #include <dpp/message.h>        // dpp::message
@@ -12,6 +12,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
+#include <bits/stdc++.h>
     
 typedef unsigned int uint;
 
@@ -132,8 +133,6 @@ void pregnantReact(const dpp::message_create_t& event, dpp::cluster& bot)
     bot.message_add_reaction(event.msg.id, event.msg.channel_id, "🫃");
 }
 
-MsgGame::Game* game;
-
 int main() 
 {    
     users_to_undistract.resize(0);
@@ -148,7 +147,7 @@ int main()
     {
         const dpp::user author = event.command.get_issuing_user();
 
-        std::string command_name = event.command.get_command_name();
+        std::string command_name = event.command.get_command_name(); //there's probably a way to make this prettier but the documentation has this setup
         if (command_name == "undistractor") 
         {
             undistract::addToUndistractList(author);
@@ -177,30 +176,27 @@ int main()
             }
             event.reply("LMAOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
         }
-/*        else if (command_name == "initializegame")
-        {
-            game = new MsgGame::Game();
-            if (game->map != nullptr && game) 
-            {
-                event.reply("Created game successfully!"); 
-                std::cout << "created game" << std::endl;
-            }
-        }
-        else if (command_name == "drawmap")
-        {
-            game->drawMapToMessage(event);
-        }
-*/
     });
     
     bot.on_ready([&bot](const dpp::ready_t& event) {
-        if (dpp::run_once<struct register_bot_commands>()) {
-            bot.global_command_create(dpp::slashcommand("undistractor", "For idiot to focus", bot.me.id));
-            bot.global_command_create(dpp::slashcommand("saytime", "Gives the current time", bot.me.id));
-            bot.global_command_create(dpp::slashcommand("laughatthisguy", "for polar to laugh at people", bot.me.id));
-/*            bot.global_command_create(dpp::slashcommand("initializegame", "command to create game object and map", bot.me.id));
-            bot.global_command_create(dpp::slashcommand("drawmap", "command to draw full map", bot.me.id));
-*/        }
+        if (dpp::run_once<struct clear_bot_commands>())
+        {
+            bot.global_bulk_command_delete(); //deletes all previously created commands (to stop bleedthrough from commands removed from source code)
+        }
+        if (dpp::run_once<struct register_bot_commands>()) //neatly puts all commands to be created into a vector and creates them
+        {
+            std::vector<dpp::slashcommand> commands= 
+            {
+                {"undistractor", "For idiot to focus", bot.me.id},
+                {"saytime", "Gives the current time", bot.me.id},
+                {"laughatthisguy", "For polar to laugh at people", bot.me.id}
+            };
+            
+            for(int i = 0; i < commands.size(); i++)
+            {
+                bot.global_command_create(commands[i]);
+            }
+        }
     });
     
     bot.on_message_create([&bot](const dpp::message_create_t& event)
@@ -217,7 +213,6 @@ int main()
 
         undistract::undistract(msg, event, bot);
         ragebait(event); 
-        
 
     });
 
